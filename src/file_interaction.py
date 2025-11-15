@@ -496,7 +496,7 @@ class UserInterface:
 
         while True:
             print("\n=== Возмжные действия ===")
-            print("1. Посмотреть имеющуюся информация по работадателям")
+            print("1. Посмотреть имеющуюся информацию по работадателям")
             print("2. Получить информацию о вакансиях из интернета по работадателям")
             print("3. Посмотреть информацию в базе данных")
             print("4. Информация о базе данных")
@@ -587,7 +587,7 @@ class UserInterface:
         print(f"{'Компания':<25}  {'з/п':<15} ")
         print("-" * 60)
         for emp in results:
-            print(f"{emp['employer_name']:<25}  {round(emp['avg_salary'],2):<6} ")
+            print(f"{emp['employer_name']:<25}  {round(emp['avg_salary'],2) if emp['avg_salary'] is not None else 'N/A':<15} ")
 
     def show_above_average_salary(self):
         """Зарплата выше средней"""
@@ -596,7 +596,7 @@ class UserInterface:
         print(f"{'Компания':<15}  {'з/п':<15} {'Должность':<15}")
         print("-" * 60)
         for emp in results:
-            print(f"{emp['employer']:<15} {emp['salary']:<15} {emp['name']:<25}   ")
+            print(f"{emp['employer']:<15} {emp['salary'] if emp['salary'] is not None else 'N/A':<15} {emp['name']:<25}   ")
 
     def show_employers_job_counts(self):
         """Количество вакансий по работодателю"""
@@ -668,5 +668,5 @@ class UserInterface:
         print("-" * 80)
         for emp in results:
             print(
-                f"{emp['id']}   {emp['salary']}    {emp['employer_name']:<15} {emp['name']:<15} "
+                f"{emp['id']:<10} {emp['salary'] if emp['salary'] is not None else 'N/A':<15}  {emp['employer_name']:<15} {emp['name']:<15} "
             )
