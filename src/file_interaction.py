@@ -1,7 +1,8 @@
 import json
 from pathlib import Path
 from typing import Any, Dict, List
-
+import os
+from dotenv import load_dotenv
 import psycopg2
 from psycopg2 import sql
 
@@ -62,6 +63,7 @@ class DatabaseManager:
 
     def save_employer(self, employer: Employer) -> bool:
         """Сохраняет информацию о работодателе в базу данных"""
+
         try:
             with psycopg2.connect(self.conn_string) as conn:
                 with conn.cursor() as cur:
@@ -315,25 +317,20 @@ class DatabaseManager:
                         }
                     )
                 return results
-
     def get_connection_info(self):
-        """Получает информацию от пользователя для соединения с PostgreSQL"""
-        print("\n=== Создание базы данных ===")
-        print("Введите информацию для создания базы данных PostgreSQL.")
+        load_dotenv()
+        conn={
+            "host": os.getenv('DB_HOST', 'localhost'),
+            "port": int(os.getenv('DB_PORT', '5432')),
+            "user": os.getenv('DB_USER', 'postgres'),
+            "password": os.getenv('DB_PASSWORD'),
+            "database": os.getenv('DB_NAME', 'job_tracker'),
+            }
 
-        host = input("PostgreSQL host [localhost]: ").strip() or "localhost"
-        port = input("PostgreSQL port [5432]: ").strip() or "5432"
-        user = input("PostgreSQL user [postgres]: ").strip() or "postgres"
-        password = input("PostgreSQL password: ")
-        database = input("Database name [job_tracker]: ").strip() or "job_tracker"
 
-        return {
-            "host": host,
-            "port": port,
-            "user": user,
-            "password": password,
-            "database": database,
-        }
+        return     conn
+
+
 
     def connect_to_postgres(self, connection_info, database=None):
         """Подсоединение к базе данных"""
@@ -393,6 +390,7 @@ class DatabaseManager:
         """Установка базы данных"""
         connection_info = self.get_connection_info()
         database_name = connection_info["database"]
+
         if not self.create_database(connection_info, database_name):
             return None
         conn = self.connect_to_postgres(connection_info, database_name)
@@ -444,6 +442,7 @@ class DatabaseManager:
         self.save_employers_bulk(emp)
 
 
+
 class UserInterface:
     def __init__(self):
         self.connection_string = None
@@ -454,12 +453,13 @@ class UserInterface:
 
     def setup_database(self):
         """Доступ к базе данных"""
-        password = input("Введите password: ").strip()
+        load_dotenv()
         self.connection_string = (
-            f"postgresql://postgres:{password}@localhost:5432/job_tracker"
+            f"postgresql://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@{os.getenv('DB_HOST')}:{os.getenv('DB_PORT')}/{os.getenv('DB_NAME')}"
         )
+
         if not self.test_connection(
-            f"postgresql://postgres:{password}@localhost:5432/job_tracker"
+            f"postgresql://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@{os.getenv('DB_HOST')}:{os.getenv('DB_PORT')}/{os.getenv('DB_NAME')}"
         ):
             self.setup_new_database()
 
@@ -491,7 +491,7 @@ class UserInterface:
     def start(self):
         """Основное меню"""
         if not self.db:
-            print("База данных не открыта!")
+            print("База данных не открывается!")
             return
 
         while True:
