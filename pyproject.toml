@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "pythonproject12"
+version = "0.1.0"
+description = ""
+authors = ["Boldina Elena <s35011111@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.13"
+requests = "^2.32.5"
+python-dotenv = "^1.2.1"
+
+
+[tool.poetry.group.lint.dependencies]
+isort = "^7.0.0"
+mypy = "^1.18.2"
+black = "^25.11.0"
+flake8 = "^7.3.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
